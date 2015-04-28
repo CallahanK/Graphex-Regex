@@ -1,0 +1,25 @@
+package graphex;
+
+public class Regex {
+
+	String src = "";
+	
+	public Regex(String src){
+		this.src = src;
+	}
+	
+	public void parseRegex(){
+		//TODO
+	}
+	
+	public void parseTerm(){
+		//TODO
+	}
+	
+	public void parseFactor(){
+		//TODO
+	}
+	
+	public void parse
+	
+}

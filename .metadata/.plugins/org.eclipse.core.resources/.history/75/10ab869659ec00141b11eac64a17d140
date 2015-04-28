@@ -1,0 +1,16 @@
+package graphex;
+
+public class Grep {
+
+	public static void main(String[] args) {
+		System.out.println("Running");
+		if (args.length==0){
+			//Error incorrect argument call
+		} else if (args[1]=="1"){
+			System.out.println("Good args");
+			
+			
+		}
+	}
+
+}
