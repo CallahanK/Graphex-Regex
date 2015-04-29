@@ -1,12 +1,9 @@
 package graphex;
 
-import java.util.ArrayDeque;
-
 public class Regex {
 
 	String src = "";
 	int currSubString = 0;
-	ArrayDeque<NFANode> fragmentStack = new ArrayDeque<NFANode>();
 	
 	public Regex(String src){
 		this.src = src;
@@ -29,13 +26,12 @@ public class Regex {
 		System.out.println("TERM");
 		//TODO
 		parseFactor();
-		/*
 		if(!next().equals("*")){
 			parseTerm();
 		} else {
 			//epsilon production
 		}
-			*/ 
+			 
 	}
 	
 	public void parseFactor(){
@@ -60,26 +56,10 @@ public class Regex {
 	}
 	
 	public void parseChar(){
-		
-		makeLiteralTransition();
-		
-		
-		//TODO
 		System.out.println("CHAR");
+		//TODO
 		System.out.println(next());
 		currSubString++;
-	}
-	
-	
-	public void makeLiteralTransition(){
-		NFANode start = new NFANode();
-		NFANode accept = new NFANode();
-		
-		start.transitionStates.put(next(), accept);
-		accept.acceptState = true;
-		
-		fragmentStack.push(start);
-		fragmentStack.push(accept);
 	}
 	
 	public void match(String input){
