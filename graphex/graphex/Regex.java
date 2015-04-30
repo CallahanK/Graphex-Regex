@@ -1,7 +1,6 @@
 package graphex;
 
 import java.util.ArrayDeque;
-import java.util.*;
 
 public class Regex {
 
@@ -62,8 +61,8 @@ public class Regex {
 	
 	public void parseChar(){
 		
-		makeLiteralTransition();
-		
+		NFANode nodeFragment = new NFANode(next());
+		fragmentStack.push(nodeFragment);
 		
 		//TODO
 		System.out.println("CHAR");
@@ -72,16 +71,6 @@ public class Regex {
 	}
 	
 	
-	public void makeLiteralTransition(){
-		NFANode start = new NFANode();
-		NFANode accept = new NFANode();
-		
-		start.transitionStates.put(next(), HashSet.add(accept));
-		accept.acceptState = true;
-		
-		fragmentStack.push(start);
-		fragmentStack.push(accept);
-	}
 	
 	public void match(String input){
 		System.out.println("Expecting: " + input);
