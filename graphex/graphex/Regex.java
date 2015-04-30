@@ -1,6 +1,7 @@
 package graphex;
 
 import java.util.ArrayDeque;
+import java.util.*;
 
 public class Regex {
 
@@ -75,7 +76,7 @@ public class Regex {
 		NFANode start = new NFANode();
 		NFANode accept = new NFANode();
 		
-		start.transitionStates.put(next(), accept);
+		start.transitionStates.put(next(), HashSet.add(accept));
 		accept.acceptState = true;
 		
 		fragmentStack.push(start);
