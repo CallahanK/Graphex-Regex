@@ -36,12 +36,6 @@ public class NFANode {
 	}
 	
 	public static NFANode makeStar(NFANode starStart){
-		//Adds epsilon transition from current accept state
-		//to the current start state
-		
-		NFANode newAccept = new NFANode();
-		newAccept.acceptState = true;
-		
 		Iterator<NFANode> node = getNFANodes(starStart).iterator();
 		while(node.hasNext()){
 			NFANode next = node.next();
@@ -52,15 +46,11 @@ public class NFANode {
 					next.transitionStates.put(EPSILON, set);
 				}
 				set.add(starStart);
-				set.add(newAccept);
-				next.acceptState=false;
 			}
 		}
 		
-		//Adds new 
 		NFANode newStart = new NFANode(EPSILON, starStart);
-		HashSet<NFANode> set = newStart.transitionStates.get(EPSILON);
-		set.add(newAccept);
+		newStart.acceptState = true;
 		
 		return newStart;
 	}
@@ -87,36 +77,6 @@ public class NFANode {
 		NFANode newStart = new NFANode(EPSILON, fragA);
 		HashSet<NFANode> set = newStart.transitionStates.get(EPSILON);
 		set.add(fragB);
-		
-		NFANode newAccept = new NFANode();
-		newAccept.acceptState = true;
-		Iterator<NFANode> nodeA = getNFANodes(fragA).iterator();
-		while(nodeA.hasNext()){
-			NFANode next = nodeA.next();
-			if(next.acceptState){
-				HashSet<NFANode> setA = next.transitionStates.get(EPSILON);
-				if(setA==null){
-					setA = new HashSet<NFANode>();
-					next.transitionStates.put(EPSILON, setA);
-				}
-				setA.add(newAccept);
-				next.acceptState=false;
-			}
-		}
-		
-		Iterator<NFANode> nodeB = getNFANodes(fragB).iterator();
-		while(nodeB.hasNext()){
-			NFANode next = nodeB.next();
-			if(next.acceptState){
-				HashSet<NFANode> setB = next.transitionStates.get(EPSILON);
-				if(setB==null){
-					setB = new HashSet<NFANode>();
-					next.transitionStates.put(EPSILON, setB);
-				}
-				setB.add(newAccept);
-				next.acceptState=false;
-			}
-		}
 		
 		return newStart;
 	}
