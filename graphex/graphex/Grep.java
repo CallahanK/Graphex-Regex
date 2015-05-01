@@ -1,66 +1,75 @@
 package graphex;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Set;
 
 public class Grep {
 
 	public static void main(String[] args) {
-		System.out.println("Running");
 		int argParseCurr = 0;
 		
 		String nfaFileLoc = "";
 		String dfaFileLoc = "";
 		String regexSrc = "";
 		String srcFileLoc = "";
+		Boolean printNFA = false;
+		Boolean printDFA = false;
 		
 		if (args.length==0){
 			//Error missing arguments
 		} else {
-			
+			//Begin Reading In Arguments
 			if (args[argParseCurr].equals("-n")){
-				System.out.println("Making NFA");
+				//System.out.println("Printing NFA");
 				nfaFileLoc = args[argParseCurr+1];
 				argParseCurr+=2;
+				printNFA = true;				
 			}
 			if (args[argParseCurr].equals("-d")){
-				System.out.println("Making DFA");
+				//System.out.println("Printing DFA");
 				dfaFileLoc = args[argParseCurr+1];
 				argParseCurr+=2;
+				printDFA = true;
 			}
 			regexSrc = args[argParseCurr];
 			srcFileLoc = args[argParseCurr+1];
+			//End of Arguments
+			
+			//Begin Processing Regular Expression
+			Regex reg = new Regex(regexSrc);
+			NFANode head = reg.parse();
+			//System.out.print(reg.messages);
+			if(printNFA){
+			//Print NFA to file
+				try {
+					String NFAString = NFANode.printNFA(head);
+					//PrintWriter out = new PrintWriter("test.gv");
+					PrintWriter out = new PrintWriter(nfaFileLoc);
+					out.println(NFAString);
+					out.close();
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}//End print NFA
+			
+			
 		}
 		
-		System.out.println(NFANode.EPSILON);
 		
+		
+		
+		
+		System.out.println("Arguments");
 		System.out.println(nfaFileLoc);
 		System.out.println(dfaFileLoc);
 		System.out.println(regexSrc);
 		System.out.println(srcFileLoc);
 		System.out.println("\n");
 		
-		Regex reg = new Regex(regexSrc);
-		reg.parseRegex();
 		
-		//TMP TESTS FOR NFANODE METHODS
-		NFANode node = new NFANode("a");
-		NFANode node2 = new NFANode("b");
-		//node = NFANode.makeStar(node);
-		System.out.println("Head Node is accept: " + node.acceptState);
-		node = NFANode.makeUnion(node, node2);
-		//node = NFANode.makeStar(node);
-		//node = NFANode.makeConcat(node, node2);
-		Set<NFANode> set = NFANode.getNFANodes(node);
-		Iterator<NFANode> nextNodes = set.iterator();		
-		while(nextNodes.hasNext()){
-			NFANode n = nextNodes.next();
-			System.out.println("Node: " + n);
-			System.out.println("Accept State: " + n.acceptState);
-		}
-		System.out.println("New Head Node is accept: " + node.acceptState);
-		
-		//END OF NFANODE METHOD TESTS
 	}
 
 }

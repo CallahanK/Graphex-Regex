@@ -6,6 +6,7 @@ public class NFANode {
 
 	public final static String EPSILON = "\u03B5";
 	
+	public String name = "";
 	public Map<String,HashSet<NFANode>> transitionStates = new HashMap<String,HashSet<NFANode>>();
 	public Boolean acceptState = false;
 	
@@ -108,6 +109,72 @@ public class NFANode {
 		}
 		
 	}
+	
+	public static String printNFA(NFANode head){
+		//Label all nodes
+		//Get accept nodes and make double circle
+		String acceptStates = "";
+		
+		String transitions = "";
+		int i = 0;
+		Iterator<NFANode> node = getNFANodes(head).iterator();
+		while(node.hasNext()){
+			NFANode next = node.next();
+			next.name = "q" + i;
+			i++;
+			if(next.acceptState){
+				acceptStates = acceptStates + next.name + ", ";
+			}
+		}
+		
+		acceptStates = acceptStates.substring(0, acceptStates.length()-2) + ";";
+		//System.out.println(acceptStates);
+		
+		//Traverse NFA add all transitions with label
+		transitions = "\"\" -> " + head.name + ";\n";
+		Set<NFANode> nodeSet = new HashSet<NFANode>();
+		transitions = getTransitions(head, nodeSet, transitions);
+		
+		//Build complete dot file
+		String output = "";
+		output += "digraph NFA { \n";
+		output += "rankdir=LR; \n";
+		output += "node [ shape = none]; \"\"; \n";
+		output += "node [ shape = doublecircle]; " + acceptStates + " \n";
+		output += "node [ shape = circle];\n";
+		output += transitions;
+		output += "}";
+		
+		return output;
+	}
+	
+	//Helper Method for getNFANodes
+	//Should only be called within 
+	private static String getTransitions(NFANode node, Set<NFANode> set, String builtTransitions){
+		if( set.add(node)){
+			Set<NFANode> thisNodeTransitions = new HashSet<NFANode>();
+			//Gets Iterator for each Key in HashMap
+			Iterator<String> keySet = node.transitionStates.keySet().iterator();
+			while(keySet.hasNext()){
+				String key = keySet.next();
+				Iterator<NFANode> keyTransitions = node.transitionStates.get(key).iterator();
+				while(keyTransitions.hasNext()){
+					NFANode nodeTransition = keyTransitions.next();
+					
+					builtTransitions = builtTransitions + node.name + " -> " + nodeTransition.name + " [ label = \"" + key + "\" ];\n";
+					thisNodeTransitions.add(nodeTransition);
+				}
+				
+				//thisNodeTransitions.addAll(keySet.next());
+			}
+			Iterator<NFANode> nextNodes = thisNodeTransitions.iterator();		
+			while(nextNodes.hasNext()){
+				builtTransitions = getTransitions( nextNodes.next(),set,builtTransitions);
+			}
+		}
+			return builtTransitions;
+		}
+	
 	
 	
 }

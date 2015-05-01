@@ -7,6 +7,6 @@
 <listEntry value="1"/>
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="graphex.Grep"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-n nfa -d dfa a*b filethisloc"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-n nfa.gv a*|b filethisloc"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="graphex"/>
 </launchConfiguration>

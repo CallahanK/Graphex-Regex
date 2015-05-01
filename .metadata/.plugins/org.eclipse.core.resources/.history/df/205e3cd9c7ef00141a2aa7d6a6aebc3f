@@ -1,0 +1,120 @@
+package graphex;
+
+import java.io.Console;
+import java.util.ArrayDeque;
+
+public class Regex {
+
+	String src = "";
+	int currSubString = 0;
+	ArrayDeque<NFANode> fragmentStack = new ArrayDeque<NFANode>();
+	
+	public Regex(String src){
+		this.src = src;
+	}
+	
+	public NFANode parse(){
+		parseRegex();
+		return fragmentStack.pop();
+	}
+	
+	public void parseRegex(){
+		System.out.println("REGEX");
+		//TODO
+		parseTerm();
+		if(next().equals("|")){
+			match("|");
+			parseRegex();
+			//Union a | b
+			NFANode tmpB = fragmentStack.pop();
+			NFANode tmpA = fragmentStack.pop();
+			NFANode union = NFANode.makeUnion(tmpA, tmpB);
+			union.name = "good";
+			fragmentStack.push(union);
+			
+		} else {
+			//Epsilon production
+		}
+	}
+	
+	public void parseTerm(){
+		System.out.println("TERM");
+		//TODO
+		parseFactor();
+		
+		if(!next().equals(")") && !next().equals("|") && !next().equals("")){
+			System.out.println("Current token at term: " + next());
+			parseTerm();
+			//Concatenate a . b
+			NFANode tmpB = fragmentStack.pop();
+			NFANode tmpA = fragmentStack.pop();
+			tmpA = NFANode.makeConcat(tmpA, tmpB);
+			fragmentStack.push(tmpA);
+		} else {
+			//epsilon production
+		}
+			
+	}
+	
+	public void parseFactor(){
+		System.out.println("FACTOR");
+		//TODO
+		parseBase();
+		while(next().equals("*")){
+			match("*");
+			NFANode tmpNode = fragmentStack.pop();
+			tmpNode = NFANode.makeStar(tmpNode);
+			fragmentStack.push(tmpNode);
+		} 
+	}
+	
+	public void parseBase(){
+		System.out.println("BASE");
+		//TODO	
+		if(next().equals("(")){
+			match("(");
+			parseRegex();
+			match(")");
+		} else {
+			parseChar();
+		}
+	}
+	
+	public void parseChar(){
+		
+		NFANode nodeFragment = new NFANode(next());
+		fragmentStack.push(nodeFragment);
+		
+		System.out.println("CHAR");
+		System.out.println(next());
+		currSubString++;
+	}
+	
+	
+	
+	public void match(String input){
+		System.out.println("Expecting: " + input);
+		if(input.equals(next())){
+			//Good match
+			System.out.println("Matched: " + next());
+		} else {
+			//Error
+			System.out.println("ERROR UNEXPECTED INPUT");
+			//Expected input got next
+		}
+		currSubString++;
+	}
+	
+	public String next(){
+		String output = "";
+		if(currSubString < src.length()){
+			output = src.substring(currSubString, currSubString+1);
+		} else {
+			//Error 
+			System.out.println("ERROR EOF REACHED EARLY");
+		}
+		
+		return output;
+	}
+	
+}
