@@ -1,12 +1,13 @@
 digraph NFA { 
 rankdir=LR; 
 node [ shape = none]; ""; 
-node [ shape = doublecircle]; q2; 
+node [ shape = doublecircle]; q0; 
 node [ shape = circle];
-"" -> q3;
-q3 -> q1 [ label = "ε" ];
-q3 -> q2 [ label = "ε" ];
-q1 -> q0 [ label = "a" ];
-q0 -> q1 [ label = "ε" ];
-q0 -> q2 [ label = "ε" ];
+"" -> q4;
+q4 -> q3 [ label = "ε" ];
+q4 -> q5 [ label = "ε" ];
+q3 -> q1 [ label = "a" ];
+q1 -> q0 [ label = "ε" ];
+q5 -> q2 [ label = "b" ];
+q2 -> q0 [ label = "ε" ];
 }

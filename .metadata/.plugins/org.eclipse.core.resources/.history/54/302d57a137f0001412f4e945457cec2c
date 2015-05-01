@@ -16,16 +16,12 @@ public class DFANode {
 		this.name.add(start);
 	}
 	
-	//Construct a single DFA node from a set of NFA nodes
-	public DFANode(HashSet<NFANode> newNode){
-		this.name.addAll(newNode);
-	}
-	
 	//Constructs a single DFA node from a set of NFA nodes 
 	//with a single transition from an existing node
 	public DFANode(DFANode currNode, HashSet<NFANode> newNode, String transitionSymbol){
 		this.name.addAll(newNode);
 		currNode.transitionStates.put(transitionSymbol, this);
+		// ? return this ?//
 	}
 	
 	

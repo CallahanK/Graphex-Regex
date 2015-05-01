@@ -56,7 +56,6 @@ public class Grep {
 				}
 			}//End print NFA
 			
-			//TEST EPSILONCLOSURE
 			Set<NFANode> test = new HashSet<NFANode>();
 			test.add(head);
 			test = NFANode.epsilonClosure(test);
@@ -64,9 +63,11 @@ public class Grep {
 			while(print.hasNext()){
 				System.out.print(print.next().name + "\n");
 			}
-			//END TEST EPSILON CLOSURE
-			
 		}
+		
+		
+		
+		
 		
 		System.out.println("Arguments");
 		System.out.println(nfaFileLoc);

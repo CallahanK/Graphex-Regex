@@ -232,14 +232,11 @@ public class NFANode {
 		
 		while(!statesClosure.isEmpty()){
 			NFANode currNode = statesClosure.pop();
-			
-			if(currNode.transitionStates.containsKey(EPSILON)){
-				Iterator<NFANode> epsilonTransitions = currNode.transitionStates.get(EPSILON).iterator();
-				while(epsilonTransitions.hasNext()){
-					NFANode transition = epsilonTransitions.next();
-					if(result.add(transition)){
-						statesClosure.push(transition);
-					}
+			Iterator<NFANode> epsilonTransitions = currNode.transitionStates.get(EPSILON).iterator();
+			while(epsilonTransitions.hasNext()){
+				NFANode transition = epsilonTransitions.next();
+				if(result.add(transition)){
+					statesClosure.push(transition);
 				}
 			}
 		}
