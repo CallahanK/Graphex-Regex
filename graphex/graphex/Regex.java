@@ -1,13 +1,15 @@
 package graphex;
 
-import java.io.Console;
 import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Regex {
 
 	String src = "";
 	int currSubString = 0;
 	ArrayDeque<NFANode> fragmentStack = new ArrayDeque<NFANode>();
+	Set<String> alphabet = new HashSet<String>();
 	String messages = "";
 	
 	public Regex(String src){
@@ -84,6 +86,8 @@ public class Regex {
 		NFANode nodeFragment = new NFANode(next());
 		fragmentStack.push(nodeFragment);
 		
+		alphabet.add(next());
+		
 		messages += "CHAR\n";
 		messages += next() + "\n";
 		currSubString++;
@@ -110,6 +114,31 @@ public class Regex {
 			output = src.substring(currSubString, currSubString+1);
 		}		
 		return output;
+	}
+	
+	public static Boolean testString(DFANode head, String test){
+		Boolean matched = false;
+		DFANode currNode = head;
+		
+		if(head.acceptState){
+			matched = true;
+		}
+		
+		for(int i = 0; i<test.length(); i++){
+			String sub = test.substring(i, i+1);
+			
+			currNode = currNode.transitionStates.get(sub);
+			if(currNode==null){
+				return false;
+			}
+			if(currNode.acceptState){
+				matched = true;
+			}
+		}
+		
+		
+		
+		return matched;
 	}
 	
 }

@@ -188,7 +188,7 @@ public class NFANode {
 		return output;
 	}
 	
-	//Helper Method for getNFANodes
+	//Helper Method for printNFANodes
 	//Should only be called within 
 	private static String getTransitions(NFANode node, Set<NFANode> set, String builtTransitions){
 		if( set.add(node)){
@@ -216,19 +216,33 @@ public class NFANode {
 		}
 	
 	
-	private Set<NFANode> move(NFANode node, String symbol){
-		return node.transitionStates.get(symbol);
+	private static HashSet<NFANode> move(Set<NFANode> nodes, String symbol){
+		HashSet<NFANode> output = new HashSet<NFANode>();
+		Iterator<NFANode> states = nodes.iterator();
+		while(states.hasNext()){
+			HashSet<NFANode> statesSet = states.next().transitionStates.get(symbol);
+			if(!(statesSet==null)){
+				output.addAll(statesSet);
+			}
+		}
+		
+		return output;
 	}
 	
-	public Set<NFANode> epsilonClosure(NFANode node){
-		return node.transitionStates.get(EPSILON);
+	public static HashSet<NFANode> epsilonClosure(NFANode node){
+		HashSet<NFANode> set = node.transitionStates.get(EPSILON);
+		if(set==null){
+			set = new HashSet<NFANode>();
+		}
+		set.add(node);
+		return set;
 	}
 	
-	public static Set<NFANode> epsilonClosure(Set<NFANode> nodes){
+	public static HashSet<NFANode> epsilonClosure(HashSet<NFANode> nodes){
 		Deque<NFANode> statesClosure = new ArrayDeque<NFANode>();
 		statesClosure.addAll(nodes);
 		
-		Set<NFANode> result = nodes;
+		HashSet<NFANode> result = nodes;
 		
 		while(!statesClosure.isEmpty()){
 			NFANode currNode = statesClosure.pop();
@@ -246,5 +260,71 @@ public class NFANode {
 		
 		return result;
 	}
+	
+	public static DFANode makeDFA(NFANode head, Set<String> alphabet ){
+		Set<DFANode> dfaNodes = new HashSet<DFANode>();
+		
+		Deque<DFANode> statesToMake = new ArrayDeque<DFANode>();
+		//Epsilon closure broken for single state
+		//Hack head node into tmp Set to fix
+		HashSet<NFANode> tmpTest = new HashSet<NFANode>();
+		tmpTest.add(head);
+		
+		DFANode dfaHead = new DFANode(epsilonClosure(tmpTest) );
+		dfaNodes.add(dfaHead);
+		statesToMake.push(dfaHead);;
+		
+		while(!statesToMake.isEmpty()){
+		//while(!DFANode.isMarked(dfaNodes)){
+			//DFANode currNode = DFANode.firstUnMarked(dfaNodes);
+			DFANode currNode = statesToMake.pop();
+			currNode.marked = true;
+			Iterator<String> symbols = alphabet.iterator();
+			while(symbols.hasNext()){
+				String symbol = symbols.next();
+				HashSet<NFANode> symbolTransitions = epsilonClosure(move(currNode.name,symbol));
+				
+				Iterator<DFANode> currNodesList = dfaNodes.iterator();
+				Boolean matched = false;
+				while(currNodesList.hasNext()){
+					DFANode node = currNodesList.next();
+					if(node.name.equals(symbolTransitions)){
+						currNode.makeTransition(node, symbol);
+						matched = true;
+						//No need to continue searching so,
+						//break; 
+					}
+				}
+				if(!matched){
+					//Make new DFA node 
+					DFANode newNode = new DFANode(symbolTransitions);
+					//Make transition from currNode to new node
+					currNode.makeTransition(newNode, symbol);
+					//Add new node to dfaNodes
+					dfaNodes.add(newNode);
+					statesToMake.push(newNode);
+				}
+				
+			}
+			
+		}
+		
+		Iterator<DFANode> fullDFA = DFANode.getDFANodes(dfaHead).iterator();
+		while(fullDFA.hasNext()){
+			DFANode node = fullDFA.next();
+			Iterator<NFANode> dfaNodeNFAStates = node.name.iterator();
+			while(dfaNodeNFAStates.hasNext()){
+				if(dfaNodeNFAStates.next().acceptState){
+					node.acceptState=true;
+				}
+			}
+			
+		}
+		
+		return dfaHead;
+	}
+	
+	
+	
 	
 }

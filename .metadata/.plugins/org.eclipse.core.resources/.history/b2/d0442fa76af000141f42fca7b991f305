@@ -1,0 +1,156 @@
+package graphex;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+public class DFANode {
+
+	public Set<NFANode> name = new HashSet<NFANode>(); 
+	public Map<String, DFANode> transitionStates = new HashMap<String, DFANode>();
+	public Boolean acceptState = false;
+	public Boolean marked = false;
+	public String label = "";
+	
+	//Construct a single DFA node from a single NFA node
+	public DFANode(NFANode start){
+		this.name.add(start);
+	}
+	
+	//Construct a single DFA node from a set of NFA nodes
+	public DFANode(HashSet<NFANode> newNode){
+		this.name.addAll(newNode);
+	}
+	
+	//Constructs a single DFA node from a set of NFA nodes 
+	//with a single transition from an existing node
+	public DFANode(DFANode currNode, HashSet<NFANode> newNode, String transitionSymbol){
+		this.name.addAll(newNode);
+		currNode.transitionStates.put(transitionSymbol, this);
+	}
+	
+	//Adds a transition from this to node
+	//this -(symbol)-> node
+	public void makeTransition(DFANode node, String symbol){
+		this.transitionStates.put(symbol, node);
+	}
+	
+	public static Boolean isMarked(Set<DFANode> nodes){
+		
+		Iterator<DFANode> nodeList = nodes.iterator();
+		Boolean marked = false;
+		while(nodeList.hasNext() && !marked){
+			marked = marked || nodeList.next().marked;
+		}
+		return marked;
+	}
+	
+	public static DFANode firstUnMarked(Set<DFANode> nodes){
+		Iterator<DFANode> nodeList = nodes.iterator();
+		DFANode returnNode = null;
+		while(nodeList.hasNext()){
+			DFANode node = nodeList.next();
+			if(!node.marked){
+				returnNode = node;
+			}
+		}
+		return returnNode;
+	}
+	
+	//Starts the recursion for getNodes
+		public static Set<DFANode> getDFANodes(DFANode head){
+			Set<DFANode> nodeSet = new HashSet<DFANode>();
+			
+			getNodes(head,nodeSet);
+			
+			return nodeSet;
+		}
+		
+		//Helper Method for getNFANodes
+		//Should only be called within 
+		private static void getNodes(DFANode node, Set<DFANode> set){
+			if( set.add(node)){
+				Set<DFANode> thisNodeTransitions = new HashSet<DFANode>();
+				//Gets Iterator for each HashSet mapped to in HashMap
+				Iterator<String> keySet = node.transitionStates.keySet().iterator();
+				while(keySet.hasNext()){
+					String key = keySet.next();
+					DFANode keyTransition = node.transitionStates.get(key);
+					thisNodeTransitions.add(keyTransition);
+				}
+				Iterator<DFANode> nextNodes = thisNodeTransitions.iterator();		
+				while(nextNodes.hasNext()){
+					getNodes( nextNodes.next(),set);
+				}
+			}
+			
+		}
+	
+	public static String printDFA(DFANode head){
+		//Label all nodes
+		//Get accept nodes and make double circle
+		String acceptStates = "";
+		
+		String transitions = "";
+		int i = 0;
+		Iterator<DFANode> node = getDFANodes(head).iterator();
+		while(node.hasNext()){
+			DFANode next = node.next();
+			next.label = "q" + i;
+			i++;
+			if(next.acceptState){
+				acceptStates = acceptStates + next.label + ", ";
+			}
+		}
+		System.out.println(acceptStates);
+		acceptStates = acceptStates.substring(0, acceptStates.length()-2) + ";";
+		
+		
+		//Traverse NFA add all transitions with label
+		transitions = "\"\" -> " + head.label + ";\n";
+		Set<DFANode> nodeSet = new HashSet<DFANode>();
+		transitions = getTransitions(head, nodeSet, transitions);
+		
+		//Build complete dot file
+		String output = "";
+		output += "digraph NFA { \n";
+		output += "rankdir=LR; \n";
+		output += "node [ shape = none]; \"\"; \n";
+		output += "node [ shape = doublecircle]; " + acceptStates + " \n";
+		output += "node [ shape = circle];\n";
+		output += transitions;
+		output += "}";
+		
+		return output;
+	}
+	
+	//Helper Method for printDFANodes
+	//Should only be called within 
+	private static String getTransitions(DFANode node, Set<DFANode> set, String builtTransitions){
+		if( set.add(node)){
+			Set<DFANode> thisNodeTransitions = new HashSet<DFANode>();
+			//Gets Iterator for each Key in HashMap
+			Iterator<String> keySet = node.transitionStates.keySet().iterator();
+			while(keySet.hasNext()){
+				String key = keySet.next();
+				DFANode keyTransition = node.transitionStates.get(key);
+				
+					
+					builtTransitions = builtTransitions + node.label + " -> " + keyTransition.label + " [ label = \"" + key + "\" ];\n";
+					thisNodeTransitions.add(keyTransition);
+				
+				
+				//thisNodeTransitions.addAll(keySet.next());
+			}
+			Iterator<DFANode> nextNodes = thisNodeTransitions.iterator();		
+			while(nextNodes.hasNext()){
+				builtTransitions = getTransitions( nextNodes.next(),set,builtTransitions);
+			}
+		}
+			return builtTransitions;
+		}
+	
+	
+}

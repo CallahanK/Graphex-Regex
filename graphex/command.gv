@@ -1,17 +1,23 @@
 digraph NFA { 
 rankdir=LR; 
 node [ shape = none]; ""; 
-node [ shape = doublecircle]; q3; 
+node [ shape = doublecircle]; q13; 
 node [ shape = circle];
-"" -> q1;
-q1 -> q0 [ label = "?" ];
-q1 -> q6 [ label = "?" ];
-q0 -> q4 [ label = "?" ];
+"" -> q9;
+q9 -> q2 [ label = "?" ];
+q9 -> q7 [ label = "?" ];
+q2 -> q6 [ label = "?" ];
+q6 -> q0 [ label = "a" ];
 q0 -> q5 [ label = "?" ];
-q4 -> q2 [ label = "a" ];
-q2 -> q4 [ label = "?" ];
-q2 -> q5 [ label = "?" ];
-q5 -> q3 [ label = "?" ];
-q6 -> q7 [ label = "b" ];
-q7 -> q3 [ label = "?" ];
+q5 -> q1 [ label = "b" ];
+q1 -> q10 [ label = "?" ];
+q10 -> q13 [ label = "b" ];
+q7 -> q11 [ label = "?" ];
+q7 -> q12 [ label = "?" ];
+q11 -> q3 [ label = "a" ];
+q3 -> q8 [ label = "?" ];
+q8 -> q2 [ label = "?" ];
+q8 -> q7 [ label = "?" ];
+q12 -> q4 [ label = "b" ];
+q4 -> q8 [ label = "?" ];
 }
