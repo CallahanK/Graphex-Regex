@@ -131,11 +131,11 @@ public class Regex {
 			if(currNode==null){
 				return false;
 			}
-			if(currNode.acceptState){
-				matched = true;
-			}
+			
 		}
-		
+		if(currNode.acceptState){
+				matched = true;
+		}
 		
 		
 		return matched;
